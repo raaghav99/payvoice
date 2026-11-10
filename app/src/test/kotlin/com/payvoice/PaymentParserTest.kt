@@ -129,4 +129,21 @@ class PaymentParserTest {
         assertEquals("1500 rupees received",
             PaymentParser.speech(PaymentInfo(null, BigDecimal("1500"))))
     }
+
+    @Test
+    fun paytmRealNotification() {
+        // Real Paytm layout: title + text + bigText joined by the listener service.
+        val body = "Deposited in your HDFC Bank - 6500 on 10 November at 9:54 PM"
+        val r = parse("Received ₹1 from Renu Chaturvedi | $body | $body")
+        assertEquals("Renu Chaturvedi", r.name)
+        assertEquals(0, BigDecimal("1").compareTo(r.amount))
+        assertEquals("Renu Chaturvedi paid 1 rupees", PaymentParser.speech(r))
+    }
+
+    @Test
+    fun paytmDepositedWithoutName() {
+        val r = parse("Paytm | Received Rs 250 from Rahul Sharma via UPI")
+        assertEquals("Rahul Sharma", r.name)
+        assertEquals(0, BigDecimal("250").compareTo(r.amount))
+    }
 }
