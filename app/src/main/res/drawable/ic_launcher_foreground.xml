@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="@color/ic_launcher_symbol"
+        android:pathData="M30,46 L40,46 L52,35 L52,73 L40,62 L30,62 Z" />
+    <path
+        android:strokeColor="@color/ic_launcher_symbol"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M60,44 C64,50 64,58 60,64" />
+    <path
+        android:strokeColor="@color/ic_launcher_symbol"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M67,37 C75,47 75,61 67,71" />
+</vector>

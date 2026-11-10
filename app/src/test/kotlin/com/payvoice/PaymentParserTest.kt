@@ -84,4 +84,49 @@ class PaymentParserTest {
         assertNull(PaymentParser.parse("Your order of Rs 500 is on the way"))
         assertNull(PaymentParser.parse(""))
     }
+
+    @Test
+    fun amountFormats() {
+        fun a(t: String) = PaymentParser.extractAmount(t)!!.toPlainString()
+        assertEquals("250", a("\u20B9250"))
+        assertEquals("250", a("\u20B9 250"))
+        assertEquals("250", a("Rs250"))
+        assertEquals("250", a("Rs.250"))
+        assertEquals("1234567.5", a("rs. 12,34,567.5"))
+        assertEquals("99.99", a("INR 99.99"))
+        assertEquals("10", a("inr10"))
+        assertNull(PaymentParser.extractAmount("no money here 250"))
+    }
+
+    @Test
+    fun caseInsensitiveKeywords() {
+        val r = parse("RAHUL PAID YOU RS 250")
+        assertEquals("RAHUL", r.name)
+    }
+
+    @Test
+    fun nameLimitedToFourWords() {
+        val r = parse("Received Rs 10 from Aa Bb Cc Dd Ee")
+        assertEquals("Aa Bb Cc Dd", r.name)
+    }
+
+    @Test
+    fun nameExtractionOrderPrefersFrom() {
+        val r = parse("Received Rs 10 from Amit. Neha paid you")
+        assertEquals("Amit", r.name)
+    }
+
+    @Test
+    fun namesRejectDigitsAndSymbols() {
+        val r = parse("Rs 10 credited. Sender R4hul paid you")
+        assertNull(r.name?.takeIf { it.any { c -> c.isDigit() } })
+    }
+
+    @Test
+    fun speechFormats() {
+        assertEquals("Rahul paid 250 rupees 50 paise",
+            PaymentParser.speech(PaymentInfo("Rahul", BigDecimal("250.50"))))
+        assertEquals("1500 rupees received",
+            PaymentParser.speech(PaymentInfo(null, BigDecimal("1500"))))
+    }
 }

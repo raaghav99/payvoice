@@ -27,6 +27,10 @@ object AppFilter {
             .edit().putBoolean(KEY_ONLY_SELECTED, enabled).apply()
     }
 
+    /** Pure rule: everything is allowed unless the filter is on. */
+    fun allows(filterEnabled: Boolean, packageName: String): Boolean =
+        !filterEnabled || packageName in DEFAULT_APPS
+
     fun isAllowed(context: Context, packageName: String): Boolean =
-        !isEnabled(context) || packageName in DEFAULT_APPS
+        allows(isEnabled(context), packageName)
 }

@@ -7,8 +7,7 @@ import android.util.Log
 
 class PayVoiceListenerService : NotificationListenerService() {
 
-    private var lastKey: String? = null
-    private var lastTime = 0L
+    private val duplicates = DuplicateFilter()
 
     override fun onCreate() {
         super.onCreate()
@@ -30,24 +29,13 @@ class PayVoiceListenerService : NotificationListenerService() {
         ).filterNotNull().joinToString(" | ")
 
         val info = PaymentParser.parse(combined) ?: return
-        if (isDuplicate(info)) return
+        if (duplicates.isDuplicate(info)) return
 
         Log.d(TAG, "Payment detected from ${sbn.packageName}")
         Speaker.speak(applicationContext, PaymentParser.speech(info))
     }
 
-    @Synchronized
-    private fun isDuplicate(info: PaymentInfo): Boolean {
-        val key = "${info.name ?: ""}|${info.amount.stripTrailingZeros().toPlainString()}"
-        val now = System.currentTimeMillis()
-        if (key == lastKey && now - lastTime < DUPLICATE_WINDOW_MS) return true
-        lastKey = key
-        lastTime = now
-        return false
-    }
-
     companion object {
         private const val TAG = "PayVoice"
-        private const val DUPLICATE_WINDOW_MS = 5000L
     }
 }
