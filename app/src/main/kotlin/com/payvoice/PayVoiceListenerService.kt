@@ -44,7 +44,7 @@ class PayVoiceListenerService : NotificationListenerService() {
         val big = extras?.getCharSequence(Notification.EXTRA_BIG_TEXT)
         DebugLog.d(
             "POSTED pkg=${sbn.packageName} id=${sbn.id} flags=0x${n?.flags?.toString(16)} " +
-                "channel=${n?.channelId} title=[$title] text=[$text] big=[$big]"
+                "channel=${if (android.os.Build.VERSION.SDK_INT >= 26) n?.channelId else "n/a"} title=[$title] text=[$text] big=[$big]"
         )
 
         if (sbn.packageName == packageName) { DebugLog.d("SKIP own package"); return }
